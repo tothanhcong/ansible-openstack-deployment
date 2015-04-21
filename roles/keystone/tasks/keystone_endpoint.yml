@@ -1,0 +1,25 @@
+---
+
+- name: Create Identity Service
+  shell: >
+    keystone service-list | grep identity || 
+    keystone service-create --name {{ keystone_service_name }} 
+    --type identity --description "{{ keystone_service_desc }}"
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ keystone_service_domain }}:{{ keystone_service_admin_port }}/v2.0"
+  tags: keystone-service
+
+- name: Create Identity Service Endpoint 
+  shell: >
+    keystone endpoint-list | grep $(keystone service-list | awk '/ identity / {print $2}') ||
+    keystone endpoint-create
+    --service-id $(keystone service-list | awk '/ identity / {print $2}') 
+    --publicurl http://{{ keystone_service_domain }}:{{ keystone_service_public_port }}/v2.0 
+    --internalurl http://{{ keystone_service_domain }}:{{ keystone_service_public_port }}/v2.0 
+    --adminurl http://{{ keystone_service_domain }}:{{ keystone_service_admin_port }}/v2.0 
+    --region "{{ keystone_service_region }}"
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ keystone_service_domain }}:{{ keystone_service_admin_port }}/v2.0"
+  tags: keystone-service

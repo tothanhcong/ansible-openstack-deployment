@@ -1,0 +1,25 @@
+---
+
+- name: Install rabbitmq-server
+  yum:
+    name: "{{ rabbitmq_packages }}"
+    state: latest
+  tags: env-message-install
+
+- name: Start rabbitmq-server
+  service:
+    name: "{{ rabbitmq_services }}"
+    enabled: yes
+    state: started
+  tags: env-message-install
+
+- name: Change guest password
+  rabbitmq_user:
+    user: guest
+    password: "{{ rabbitmq_password }}"
+    configure_priv: .*
+    read_priv: .*
+    write_priv: .*
+    state: present
+    force: yes
+  tags: env-message-pwd

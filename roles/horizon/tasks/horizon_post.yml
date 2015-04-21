@@ -1,0 +1,12 @@
+---
+
+- name: Configure local_settings
+  template:
+    src: local_settings.j2
+    dest: /etc/openstack-dashboard/local_settings
+    backup: yes
+    owner: root
+    group: apache
+    mode: 0640
+  tags: horizon-cfg
+  notify: Restart Openstack Dashboard related services

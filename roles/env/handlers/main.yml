@@ -1,0 +1,13 @@
+---
+
+- name: Restart ntp
+  service:
+    name: "{{ ntp_services }}"
+    state: restarted
+    enabled: yes
+
+- name: Restart Database Server
+  service:
+    name: "{{ database_service_name }}"
+    state: restarted
+    enabled: yes

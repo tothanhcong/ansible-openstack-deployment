@@ -1,0 +1,29 @@
+---
+
+# Create tenant
+- name: Create tenants
+  keystone_user: 
+    tenant: "{{ item.name }}"
+    tenant_description: "{{ item.desc }}"
+    token: "{{ keystone_admin_token }}"
+  with_items: keystone_tenants
+  tags: keystone-tenant
+
+# Create admin user
+- name: Create Admin user
+  keystone_user:
+    user: "{{ keystone_admin_name }}"
+    password: "{{ keystone_admin_pass }}"
+    email: "{{ keystone_admin_email }}"
+    token: "{{ keystone_admin_token }}"
+    tenant: "{{ keystone_admin_tenant }}"
+  tags: keystone-tenant
+
+# Apply the admin role to admin user
+- name: Assign user-role
+  keystone_user:
+    role: "{{ keystone_admin_role }}"
+    user: "{{ keystone_admin_name }}"
+    tenant: "{{ keystone_admin_tenant }}"
+    token: "{{ keystone_admin_token }}"
+  tags: keystone-tenant

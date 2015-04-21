@@ -1,0 +1,29 @@
+---
+
+- name: Create neutron database
+  mysql_db:
+    login_host: localhost
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ neutron_database_name }}"
+  tags: neutron-db
+
+- name: Create neutron database user
+  mysql_user:
+    name: "{{ neutron_database_user }}"
+    host: "{{ item }}"
+    password: "{{ neutron_database_pass }}"
+    priv: "{{ neutron_database_name }}.*:ALL"
+    login_password: "{{ mysql_root_password }}"
+    login_host: localhost
+    login_user: root
+  with_items: neutron_database_hosts
+  tags: neutron-db
+
+- name: Populate neutron database
+  shell: > 
+    su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf
+    --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade juno" neutron
+  notify: 
+    - Restart neutron-server
+  tags: neutron-db

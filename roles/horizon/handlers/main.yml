@@ -1,0 +1,10 @@
+---
+
+- name: Restart Openstack Dashboard related services
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - httpd.service
+    - memcached.service

@@ -1,0 +1,6 @@
+---
+
+- include: cinder-api-install.yml
+- include: cinder-api-post.yml
+- include: cinder-tenant.yml
+- include: cinder-db.yml

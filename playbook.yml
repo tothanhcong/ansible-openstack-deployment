@@ -1,0 +1,10 @@
+---
+- hosts: os_all
+  roles:
+    - env
+    - { role: keystone, when: 'inventory_hostname in groups["os_controller"]' }
+    - { role: glance, when: 'inventory_hostname in groups["os_controller"]' }
+    - nova
+    - { role: cinder, when: 'inventory_hostname in groups["os_controller"]' }
+    - neutron
+    - { role: horizon, when: 'inventory_hostname in groups["os_controller"]' }

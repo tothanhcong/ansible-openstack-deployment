@@ -1,0 +1,55 @@
+[DEFAULT]
+rpc_backend = rabbit
+rabbit_host = {{ rabbitmq_host }}
+rabbit_password = {{ rabbitmq_password }}
+auth_strategy = keystone
+my_ip = {{ ansible_ssh_host }}
+
+{% if inventory_hostname in groups['os_controller'] %}
+vncserver_listen = {{ ansible_ssh_host }}
+{% endif %}
+
+{% if inventory_hostname in groups['os_compute'] %}
+vncserver_listen = 0.0.0.0
+novncproxy_base_url = http://{{ novnc_base_domain }}:6080/vnc_auto.html
+{% endif %}
+vncserver_proxyclient_address = {{ ansible_ssh_host }}
+verbose = True
+
+{% if inventory_hostname in groups['os_controller'] or inventory_hostname in groups['os_compute'] -%}
+network_api_class = nova.network.neutronv2.api.API
+security_group_api = neutron
+linuxnet_interface_driver = nova.network.linux_net.LinuxOVSInterfaceDriver
+firewall_driver = nova.virt.firewall.NoopFirewallDriver
+
+[neutron]
+url = http://{{ neutron_endpoint_domain }}:{{ neutron_endpoint_admin_port }}
+auth_strategy = keystone
+admin_auth_url = http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0
+admin_tenant_name = service
+admin_username = {{ neutron_admin_user }}
+admin_password = {{ neutron_admin_pass }}
+{% endif %}
+
+{% if inventory_hostname in groups['os_controller'] %}
+service_metadata_proxy = True
+metadata_proxy_shared_secret = {{ metadata_proxy_shared_secret }}
+{% endif %}
+
+[database]
+connection = mysql://{{ nova_database_user }}:{{ nova_database_pass }}@{{ mysql_server }}/{{ nova_database_name }}
+
+[glance]
+host = {{ glance_domain }}
+
+[keystone_authtoken]
+auth_uri = http://{{ identity_domain }}:{{ identity_public_port }}/v2.0
+identity_uri = http://{{ identity_domain }}:{{ identity_admin_port }}
+admin_tenant_name = {{ nova_admin_tenant }}
+admin_user = {{ nova_admin_user }}
+admin_password = {{ nova_admin_pass }}
+
+{% if inventory_hostname in groups['os_compute'] %}
+[libvirt]
+virt_type = kvm
+{% endif %}

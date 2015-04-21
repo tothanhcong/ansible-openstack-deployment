@@ -1,0 +1,47 @@
+---
+
+- name: Restart neutron-server
+  service:
+    name: neutron-server.service
+    state: restarted
+    enabled: yes
+
+#- name: Restart nova-api services
+#  service:
+#    name: "{{ item }}"
+#    state: restarted
+#    enabled: yes
+#  with_items:
+#    - openstack-nova-api.service
+#    - openstack-nova-scheduler.service
+#    - openstack-nova-conductor.service
+
+#- name: Restart nova-compute service
+#  service:
+#    name: openstack-nova-compute.service
+#    state: restarted
+#    enabled: yes
+
+#- name: Restart neutron (Compute Nodes) services
+#  service:
+#    name: neutron-openvswitch-agent.service
+#    state: restarted
+#    enabled: yes
+#  when: inventory_hostname in groups['os_compute']
+
+#- name: Restart neutron (Network Nodes) services
+#  service:
+#    name: "{{ item }}"
+#    state: restarted
+#    enabled: yes
+#  with_items:
+#    - neutron-openvswitch-agent.service
+#    - neutron-l3-agent.service
+#    - neutron-dhcp-agent.service
+#    - neutron-metadata-agent.service
+#  when: inventory_hostname in groups['os_network']
+
+- name: Enable neutron-ovs-cleanup
+  service:
+    name: neutron-ovs-cleanup.service
+    enabled: yes

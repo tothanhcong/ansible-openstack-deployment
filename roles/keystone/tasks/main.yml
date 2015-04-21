@@ -1,0 +1,9 @@
+---
+# Populate keystone database
+# 
+- include: keystone_install.yml
+- include: keystone_post.yml
+- include: keystone_db_setup.yml
+- include: keystone_user_tenant_role.yml
+- include: keystone_endpoint.yml
+- include: keystone_openrc.yml

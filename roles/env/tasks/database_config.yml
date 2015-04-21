@@ -1,0 +1,67 @@
+---
+
+- name: Configure Database Server
+  ini_file:
+    dest: "{{ database_config_file }}"
+    section: "{{ item.section }}"
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+    backup: yes
+  with_items: database_config
+  tags: env-db-cfg
+
+
+- name: Insert innodb_file_per_table Configure
+  lineinfile: 
+    dest: "{{ database_config_file }}"
+    insertafter: '^\[mysqld\]$'
+    line: innodb_file_per_table
+    state: present
+  notify: Restart Database Server
+  tags: env-db-cfg
+
+- name: Restart Database Server
+  service:
+    name: "{{ database_service_name }}"
+    state: restarted
+    enabled: yes
+  tags: env-db-restart
+
+- name: Create database root password 1st phase
+  mysql_user:
+    name: root
+    host: localhost
+    password: "{{ mysql_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+  tags: env-db-passwd
+  ignore_errors: yes
+
+
+- name: Create database root password 2nd phase
+  mysql_user:
+    name: "{{ item.name }}"
+    host: "{{ item.host }}"
+    password: "{{ item.password }}"
+    priv: "{{ item.priv }}"
+    state: "{{ item.state }}"
+    login_password: "{{ mysql_root_password }}"
+    login_host: localhost
+    login_user: root
+  with_items:
+    - name: root
+      priv: "*.*:ALL,GRANT"
+      host: 127.0.0.1
+      password: "{{ mysql_root_password }}"
+      state: present
+    - name: root
+      priv: "*.*:ALL,GRANT"
+      host: ::1
+      password: "{{ mysql_root_password }}"
+      state: present
+    - name: root
+      priv: "*.*:ALL,GRANT"
+      host: "{{ ansible_hostname }}"
+      password: "{{ mysql_root_password }}"
+      state: present
+  tags: env-db-passwd

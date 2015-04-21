@@ -1,0 +1,22 @@
+---
+
+- name: Restart neutron (Network Nodes)
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - neutron-openvswitch-agent.service
+    - neutron-l3-agent.service
+    - neutron-dhcp-agent.service
+    - neutron-metadata-agent.service
+  when: inventory_hostname in groups['os_network']
+  tags: neutron-service-restart
+  
+- name: Restart neutron (Compute Nodes)
+  service:
+    name: neutron-openvswitch-agent.service
+    state: restarted
+    enabled: yes
+  when: inventory_hostname in groups['os_compute']
+  tags: neutron-service-restart

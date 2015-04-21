@@ -1,0 +1,31 @@
+---
+
+- name: Install ntp
+  yum:
+    name: "{{ ntp_package_name }}"
+    state: latest
+  tags: ntp-pkg
+
+- name: Configure ntp controller service
+  template:
+    src: controller_ntp.conf.j2
+    dest: /etc/ntp.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  when: inventory_hostname in groups['os_controller']
+  tags: ntp-cfg-controller
+  notify: Restart ntp
+
+- name: Configure ntp (others) node
+  template:
+    src: others_ntp.conf.j2
+    dest: /etc/ntp.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  when: inventory_hostname not in groups['os_controller']
+  tags: ntp-cfg-others
+  notify: Restart ntp

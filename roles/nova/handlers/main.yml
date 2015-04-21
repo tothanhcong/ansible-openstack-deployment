@@ -1,0 +1,17 @@
+---
+
+- name: Restart nova-api services
+  service: 
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items: nova_api_services
+  when: inventory_hostname in groups['os_controller']
+
+- name: Restart nova-compute services
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items: nova_compute_services
+  when: inventory_hostname in groups['os_compute']

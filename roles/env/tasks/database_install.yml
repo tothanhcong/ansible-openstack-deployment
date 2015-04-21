@@ -1,0 +1,14 @@
+---
+- name: Instal database server pakages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items: database_server_packages
+  tags: env-db-server
+  when: inventory_hostname in groups['os_controller']
+
+- name: Install database python client
+  yum:
+    name: "{{ database_python }}"
+    state: latest
+  tags: env-db-python

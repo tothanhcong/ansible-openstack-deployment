@@ -1,0 +1,8 @@
+---
+
+- name: Install Openstack Dashboard packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items: horizon_packages
+  tags: horizon-pkgs

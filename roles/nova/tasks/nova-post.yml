@@ -1,0 +1,15 @@
+---
+
+- name: Modify nova-api config file
+  template:
+    src: nova.conf.j2
+    dest: /etc/nova/nova.conf
+    backup: yes
+    owner: root
+    group: nova
+    mode: 0640
+  tags: nova-cfg
+  when: inventory_hostname in groups['os_controller'] or inventory_hostname in groups['os_compute']
+  notify:
+    - Restart nova-compute services
+    - Restart nova-api services

@@ -1,0 +1,8 @@
+---
+
+- name: Restart cinder-api services
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items: cinder_api_services

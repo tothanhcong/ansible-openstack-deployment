@@ -1,0 +1,17 @@
+[DEFAULT]
+rpc_backend = rabbit
+rabbit_host = {{ rabbitmq_host }}
+rabbit_password = {{ rabbitmq_password }}
+auth_strategy = keystone
+my_ip = {{ ansible_ssh_host }}
+verbose = True
+
+[database]
+connection = mysql://{{ cinder_database_user }}:{{ cinder_database_pass }}@{{ mysql_server }}/{{ cinder_database_name }}
+
+[keystone_authtoken]
+auth_uri = http://{{ identity_domain }}:{{ identity_public_port }}/v2.0
+identity_uri = http://{{ identity_domain }}:{{ identity_admin_port }}
+admin_tenant_name = {{ cinder_admin_tenant }}
+admin_user = {{ cinder_admin_user }}
+admin_password = {{ cinder_admin_pass }}

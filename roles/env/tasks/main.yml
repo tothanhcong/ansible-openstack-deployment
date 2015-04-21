@@ -1,0 +1,12 @@
+---
+
+- include: ntp.yml
+- include: hosts.yml
+- include: extra_pkgs.yml
+- include: selinux.yml
+- include: firewall.yml
+- include: database_install.yml
+- include: database_config.yml
+  when: inventory_hostname in groups['os_controller']
+- include: message.yml
+  when: inventory_hostname in groups['os_controller']

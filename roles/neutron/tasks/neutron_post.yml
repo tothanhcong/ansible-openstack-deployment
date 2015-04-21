@@ -1,0 +1,111 @@
+---
+
+- name: Get 'service' tenant ID
+  shell: keystone tenant-list | grep {{ nova_admin_tenant }} | awk '{ print $2}'
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ keystone_service_domain }}:{{ keystone_service_admin_port }}/v2.0"
+  register: nova_admin_tenant_id
+  tags: neutron-cfg
+  when: inventory_hostname in groups['os_controller']
+
+- name: Modify neutron.conf of neutron-server
+  template:
+    src: neutron.conf.j2
+    dest: /etc/neutron/neutron.conf
+    owner: root
+    group: neutron
+    mode: 0640
+    backup: no
+  tags: neutron-cfg
+
+- name: Modify ml2_conf.ini
+  template:
+    src: ml2_plugin.ini.j2
+    dest: /etc/neutron/plugins/ml2/ml2_conf.ini
+    owner: root
+    group: neutron
+    mode: 0640
+    backup: no
+  tags: neutron-cfg
+
+- name: Modify l3_agent.ini
+  template:
+    src: l3_agent.ini.j2
+    dest: /etc/neutron/l3_agent.ini
+    owner: root
+    group: neutron
+    mode: 0640
+    backup: no
+  tags: neutron-cfg
+  when: inventory_hostname in groups['os_network']
+
+- name: Modify dhcp_agent.ini
+  template:
+    src: dhcp_agent.ini.j2
+    dest: /etc/neutron/dhcp_agent.ini
+    owner: root
+    group: neutron
+    mode: 0640
+    backup: no
+  tags: neutron-cfg
+  when: inventory_hostname in groups['os_network']
+
+- name: Configure DHCP MTU
+  copy:
+    src: dnsmasq-neutron.conf
+    dest: /etc/neutron/dnsmasq-neutron.conf
+    mode: 0644
+  tags: neutron-cfg
+  when: inventory_hostname in groups['os_network']
+
+- name: Modify dhcp_agent.ini
+  template:
+    src: metadata_agent.ini.j2
+    dest: /etc/neutron/metadata_agent.ini
+    owner: root
+    group: neutron
+    mode: 0640
+    backup: no
+  tags: neutron-cfg
+  when: inventory_hostname in groups['os_network']
+
+- name: Create plugin.ini symlink 
+  file:
+    src: /etc/neutron/plugins/ml2/ml2_conf.ini
+    dest: /etc/neutron/plugin.ini
+    state: link
+    owner: root
+    group: root
+  tags: neutron-cfg
+
+- name: Explicity start openvswitch
+  service:
+    name: openvswitch.service
+    state: started
+    enabled: yes
+  tags: start-openvswitch
+  when: inventory_hostname in groups['os_compute'] or inventory_hostname in groups['os_network']
+
+- name: add br-ex Openvswitch Bridge
+  openvswitch_bridge:
+    bridge: "{{ neutron_network_external_bridge }}"
+    state: present
+  tags: add-ext-bridge
+  when: inventory_hostname in groups['os_network']
+
+- name: add port to external bridge
+  openvswitch_port:
+    bridge: "{{ neutron_network_external_bridge }}"
+    port: "{{ neutron_network_external_interface }}"
+    state: present
+  tags: add-ext-port
+  when: inventory_hostname in groups['os_network']
+
+- name: Fix package bug
+  shell: >
+    sed -i 's,plugins/openvswitch/ovs_neutron_plugin.ini,plugin.ini,g' 
+    /usr/lib/systemd/system/neutron-openvswitch-agent.service
+  notify:
+    - Enable neutron-ovs-cleanup
+  when: inventory_hostname in groups['os_compute'] or inventory_hostname in groups['os_network']

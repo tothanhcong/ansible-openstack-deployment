@@ -1,0 +1,6 @@
+---
+
+- include: glance_install.yml
+- include: glance_user_tenant_role.yml
+- include: glance_post.yml
+- include: glance_db_setup.yml

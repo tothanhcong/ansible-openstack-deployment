@@ -1,0 +1,47 @@
+---
+
+# Create neutron user
+- name: Create 'neutron' user
+  keystone_user:
+    user: "{{ neutron_admin_user }}"
+    password: "{{ neutron_admin_pass }}"
+    email: "{{ neutron_admin_email }}"
+    token: "{{ keystone_admin_token }}"
+    tenant: "{{ neutron_admin_tenant }}"
+  tags: neutron-user
+
+
+# Apply the admin role to 'neutron' user for 'service' tenant
+- name: Assign admin role to 'neutron' user
+  keystone_user:
+    role: "{{ neutron_role }}"
+    user: "{{ neutron_admin_user }}"
+    tenant: "{{ neutron_admin_tenant }}"
+    token: "{{ keystone_admin_token }}"
+  tags: neutron-role
+
+# Create networking service
+- name: Create networking service
+  shell: >
+    keystone service-list | grep network ||
+    keystone service-create --name {{ neutron_service_name }} --type network 
+    --description "{{ neutron_service_desc }}"
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0"
+  tags: neutron-service
+
+# Create service endpoint 
+- name: Create networking service endpoint
+  shell: >
+    keystone endpoint-list | grep $(keystone service-list | awk '/ network / {print $2}') ||
+    keystone endpoint-create
+    --service-id $(keystone service-list | awk '/ network / {print $2}')
+    --publicurl http://{{ neutron_endpoint_domain }}:{{ neutron_endpoint_public_port }} 
+    --internalurl http://{{ neutron_endpoint_domain }}:{{ neutron_endpoint_public_port }}  
+    --adminurl http://{{ neutron_endpoint_domain }}:{{ neutron_endpoint_admin_port }}  
+    --region regionOne
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0"
+  tags: neutron-endpoint

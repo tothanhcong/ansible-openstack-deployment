@@ -1,0 +1,66 @@
+---
+
+- name: Create cinder user
+  keystone_user:
+    user: "{{ cinder_admin_user }}"
+    password: "{{ cinder_admin_pass }}"
+    email: "{{ cinder_admin_email }}"
+    tenant: "{{ cinder_admin_tenant }}"
+    token: "{{ keystone_admin_token }}"
+  tags: cinder-tenant
+
+- name: Assign cinder role
+  keystone_user:
+    role: "{{ cinder_role }}"
+    user: "{{ cinder_admin_user }}"
+    tenant: "{{ cinder_admin_tenant }}"
+    token: "{{ keystone_admin_token }}"
+  tags: cinder-tenant
+
+- name: Create cinder v1 service
+  shell: >
+    keystone service-list | grep volume || 
+    keystone service-create --name {{ cinderv1_service_name }} --type volume
+    --description "{{ cinder_service_desc }}"
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0"
+  tags: cinder-tenant
+
+- name: Create cinder v2 service
+  shell: >
+    keystone service-list | grep volumev2 || 
+    keystone service-create --name {{ cinderv2_service_name }} --type volumev2
+    --description "{{ cinder_service_desc }}"
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0"
+  tags: cinder-tenant
+
+- name: Create block service endpoint
+  shell: >
+    keystone endpoint-list | grep $(keystone service-list | awk '/ volume / {print $2}') ||
+    keystone endpoint-create
+    --service-id $(keystone service-list | awk '/ volume / {print $2}')
+    --publicurl http://{{ cinder_endpoint_domain }}:{{ cinder_endpoint_public_port }}/v1/%\(tenant_id\)s
+    --internalurl http://{{ cinder_endpoint_domain }}:{{ cinder_endpoint_public_port }}/v1/%\(tenant_id\)s
+    --adminurl http://{{ cinder_endpoint_domain }}:{{ cinder_endpoint_admin_port }}/v1/%\(tenant_id\)s
+    --region {{ cinder_endpoint_region }}
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0"
+  tags: cinder-tenant
+
+- name: Create block v2 service endpoint
+  shell: >
+    keystone endpoint-list | grep $(keystone service-list | awk '/ volumev2 / {print $2}') ||
+    keystone endpoint-create
+    --service-id $(keystone service-list | awk '/ volumev2 / {print $2}')
+    --publicurl http://{{ cinder_endpoint_domain }}:{{ cinder_endpoint_public_port }}/v2/%\(tenant_id\)s
+    --internalurl http://{{ cinder_endpoint_domain }}:{{ cinder_endpoint_public_port }}/v2/%\(tenant_id\)s
+    --adminurl http://{{ cinder_endpoint_domain }}:{{ cinder_endpoint_admin_port }}/v2/%\(tenant_id\)s
+    --region {{ cinder_endpoint_region }}
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0"
+  tags: cinder-tenant

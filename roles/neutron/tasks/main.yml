@@ -1,0 +1,22 @@
+---
+
+- include: neutron_controller_install.yml
+  when: inventory_hostname in groups['os_controller']
+- include: neutron_controller_tenant_user_role.yml
+  when: inventory_hostname in groups['os_controller']
+
+- include: neutron_network_pre.yml
+  when: inventory_hostname in groups['os_network']
+- include: neutron_network_install.yml
+  when: inventory_hostname in groups['os_network']
+
+- include: neutron_compute_pre.yml
+  when: inventory_hostname in groups['os_compute']
+- include: neutron_compute_install.yml
+  when: inventory_hostname in groups['os_compute']
+- include: neutron_post.yml
+
+- include: neutron_controller_db_setup.yml
+  when: inventory_hostname in groups['os_controller']
+  
+- include: restart_services.yml

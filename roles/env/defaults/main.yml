@@ -1,0 +1,26 @@
+#### Time service setting
+ntp_package_name: ntp
+ntp_services: ntpd.service
+ntp_config_file: /etc/ntp.conf
+
+#### Addutional Repository settings
+epel7_package: http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+rdo_repository: http://rdo.fedorapeople.org/openstack-juno/rdo-release-juno.rpm
+
+#### Message service settings
+rabbitmq_packages: rabbitmq-server
+rabbitmq_services: rabbitmq-server.service
+
+#### Database Related settings 
+database_server_packages:
+  - mariadb
+  - mariadb-server
+database_python: MySQL-python
+database_config:
+  - { section: 'mysqld', key: 'bind-address', value: "{{ mysql_server }}"}
+  - { section: 'mysqld', key: 'default-storage-engine', value: 'innodb'}
+  - { section: 'mysqld', key: 'collation-server', value: 'utf8_general_ci'}
+  - { section: 'mysqld', key: 'init-connect', value: "'SET NAMES utf8'"}
+  - { section: 'mysqld', key: 'character-set-server', value: 'utf8'}
+database_config_file: /etc/my.cnf
+database_service_name: mariadb.service

@@ -1,0 +1,8 @@
+---
+
+- name: Install cinder-api packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items: cinder_api_packages
+  tags: cinder-api-pkg

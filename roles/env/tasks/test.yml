@@ -1,0 +1,3 @@
+---
+
+- debug: msg="{{ keystone_cache_backend_argument }}"

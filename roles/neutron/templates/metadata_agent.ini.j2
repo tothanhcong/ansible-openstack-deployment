@@ -1,0 +1,9 @@
+[DEFAULT]
+auth_url = http://{{ identity_domain }}:{{ identity_public_port }}/v2.0
+auth_region = {{ identity_region }}
+admin_tenant_name = {{ neutron_admin_tenant }}
+admin_user = {{ neutron_service_name }}
+admin_password = {{ neutron_admin_pass }}
+nova_metadata_ip = {{ nova_metadata_server }}
+metadata_proxy_shared_secret = {{ metadata_proxy_shared_secret }}
+verbose = True

@@ -1,0 +1,46 @@
+---
+
+- name: Create glance user
+  keystone_user:
+    user: "{{ glance_admin_user }}"
+    password: "{{ glance_admin_pass }}"
+    email: "{{ glance_admin_email }}"
+    token: "{{ keystone_admin_token }}"
+    tenant: "{{ glance_admin_tenant }}"
+  tags: glance-tenant
+
+
+# Apply the admin role to glance user
+- name: Assign glance roles
+  keystone_user:
+    role: "{{ glance_role }}"
+    user: "{{ glance_admin_user }}"
+    tenant: "{{ glance_admin_tenant }}"
+    token: "{{ keystone_admin_token }}"
+  tags: glance-tenant
+
+# Create image services
+- name: Create image service
+  shell: >
+    keystone service-list | grep image ||
+    keystone service-create --name {{ glance_service_name }} --type image 
+    --description "{{ glance_service_desc }}"
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0"
+  tags: glance-tenant
+
+# Create service endpoint 
+- name: Create image service endpoint
+  shell: >
+    keystone endpoint-list | grep $(keystone service-list | awk '/ image / {print $2}') ||
+    keystone endpoint-create
+    --service-id $(keystone service-list | awk '/ image / {print $2}')
+    --publicurl http://{{ glance_endpoint_domain }}:{{ glance_endpoint_public_port }} 
+    --internalurl http://{{ glance_endpoint_domain }}:{{ glance_endpoint_public_port }}  
+    --adminurl http://{{ glance_endpoint_domain }}:{{ glance_endpoint_admin_port }}  
+    --region {{ glance_endpoint_region }}
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0"
+  tags: glance-tenant

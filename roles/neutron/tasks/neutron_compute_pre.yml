@@ -1,0 +1,9 @@
+---
+
+- name: Configure kernel networking params
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+  with_items: neutron_compute_kernal_params
+  tags: neutron-compute-sysctl

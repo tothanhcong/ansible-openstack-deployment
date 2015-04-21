@@ -1,0 +1,10 @@
+---
+
+- name: Openstack client environment script
+  template:
+    src: openrc.j2
+    dest: /root/openrc
+    owner: root
+    group: root
+    mode: 0600
+  tags: openrc

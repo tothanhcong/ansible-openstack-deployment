@@ -1,0 +1,23 @@
+---
+
+- name: Copy glance-api.conf
+  template:
+    src: glance-api.conf.j2
+    dest: /etc/glance/glance-api.conf
+    backup: yes
+    owner: root
+    group: glance
+    mode: 0640
+  tags:
+    - glance-cfg
+
+- name: Copy glance-registry.conf
+  template:
+    src: glance-registry.conf.j2
+    dest: /etc/glance/glance-registry.conf
+    backup: yes
+    owner: root
+    group: glance
+    mode: 0640
+  tags:
+    - glance-cfg

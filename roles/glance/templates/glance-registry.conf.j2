@@ -1,0 +1,16 @@
+[DEFAULT]
+notification_driver = noop
+verbose = True
+
+[database]
+connection = mysql://{{ glance_database_user }}:{{ glance_database_pass }}@{{ mysql_server }}/{{ glance_database_name }}
+
+[keystone_authtoken]
+auth_uri = http://{{ identity_domain }}:{{ identity_public_port }}/v2.0
+identity_uri = http://{{ identity_domain }}:{{ identity_admin_port }}
+admin_tenant_name = {{ glance_admin_tenant }}
+admin_user = {{ glance_admin_user }}
+admin_password = {{ glance_admin_pass }}
+ 
+[paste_deploy]
+flavor = keystone

@@ -1,0 +1,12 @@
+---
+
+- name: Copy cinder config file
+  template:
+    src: cinder.conf.j2
+    dest: /etc/cinder/cinder.conf
+    owner: root
+    group: cinder
+    mode: 0640
+    backup: yes
+  tags: cinder-cfg
+  notify: Restart cinder-api services

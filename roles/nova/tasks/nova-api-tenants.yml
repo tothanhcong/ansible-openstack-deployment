@@ -1,0 +1,42 @@
+---
+
+- name: Create nova user
+  keystone_user:
+    user: "{{ nova_admin_user }}"
+    password: "{{ nova_admin_pass }}"
+    email: "{{ nova_admin_email }}"
+    token: "{{ keystone_admin_token }}"
+    tenant: "{{ nova_admin_tenant }}"
+  tags: nova-tenant
+
+- name: Assign nova roles
+  keystone_user:
+    role: "{{ nova_role }}"
+    user: "{{ nova_admin_user }}"
+    tenant: "{{ nova_admin_tenant }}"
+    token: "{{ keystone_admin_token }}"
+  tags: nova-tenant
+
+- name: Create Compute service
+  shell: >
+    keystone service-list | grep compute ||
+    keystone service-create --name {{ nova_service_name }} --type compute
+    --description "{{ nova_service_desc }}"
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0"
+  tags: nova-tenant
+
+- name: Create Compute Service endpoint
+  shell: >
+    keystone endpoint-list | grep $(keystone service-list | awk '/ compute / {print $2}') ||
+    keystone endpoint-create
+    --service-id $(keystone service-list | awk '/ compute / {print $2}')
+    --publicurl http://{{ nova_endpoint_domain }}:{{ nova_endpoint_public_port }}/v2/%\(tenant_id\)s
+    --internalurl http://{{ nova_endpoint_domain }}:{{ nova_endpoint_public_port }}/v2/%\(tenant_id\)s
+    --adminurl http://{{ nova_endpoint_domain }}:{{ nova_endpoint_admin_port }}/v2/%\(tenant_id\)s
+    --region {{ nova_endpoint_region }}
+  environment:
+    OS_SERVICE_TOKEN: "{{ keystone_admin_token }}"
+    OS_SERVICE_ENDPOINT: "http://{{ identity_domain }}:{{ identity_admin_port }}/v2.0"
+  tags: nova-tenant

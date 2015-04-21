@@ -1,0 +1,8 @@
+---
+
+- name: Install neutron Network
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items: neutron_network_pakages
+  tags: neutron-network-pkgs

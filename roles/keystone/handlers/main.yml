@@ -1,0 +1,7 @@
+---
+- name: Restart keystone
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items: keystone_services

@@ -1,0 +1,8 @@
+---
+
+- name: Install OS keystone packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items: keystone_packages
+  tags: keystone-pkg

@@ -1,0 +1,28 @@
+---
+
+- name: Create glance database
+  mysql_db:
+    login_host: localhost
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ glance_database_name }}"
+  tags: glance-db
+
+- name: Create glance database user
+  mysql_user:
+    name: "{{ glance_database_user }}"
+    host: "{{ item }}"
+    password: "{{ glance_database_pass }}"
+    priv: "{{ glance_database_name }}.*:ALL"
+    login_password: "{{ mysql_root_password }}"
+    login_host: localhost
+    login_user: root
+  with_items: glance_database_hosts
+  tags: glance-db
+
+- name: Populate glance database
+  shell: su -s /bin/sh -c "glance-manage db_sync" glance
+  notify: 
+    - Restart glance-api
+    - Restart glance-registry
+  tags: glance-db

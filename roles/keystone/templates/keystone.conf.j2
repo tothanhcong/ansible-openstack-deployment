@@ -1,0 +1,13 @@
+[DEFAULT]
+admin_token = {{ keystone_admin_token }}
+verbose = True
+
+[database]
+connection = mysql://{{ keystone_database_user }}:{{ keystone_database_pass }}@{{ mysql_server }}/{{ keystone_database_name }}
+
+[revoke]
+driver = keystone.contrib.revoke.backends.sql.Revoke
+
+[token]
+provider = keystone.token.providers.uuid.Provider
+driver = keystone.token.persistence.backends.sql.Token

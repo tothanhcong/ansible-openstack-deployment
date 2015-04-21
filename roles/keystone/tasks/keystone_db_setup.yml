@@ -1,0 +1,31 @@
+---
+- name: Create keystone database
+  mysql_db:
+    login_host: localhost
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ keystone_database_name }}"
+  tags: keystone-db
+
+- name: Create keystone user
+  mysql_user:
+    name: "{{ keystone_database_user }}"
+    host: "{{ item }}"
+    password: "{{ keystone_database_pass }}"
+    priv: "{{ keystone_database_name }}.*:ALL"
+    login_password: "{{ mysql_root_password }}"
+    login_host: localhost
+    login_user: root
+  with_items: keystone_database_hosts
+  tags: keystone-db
+
+- name: Populate keystone database
+  shell: su -s /bin/sh -c "keystone-manage db_sync" keystone
+  tags: keystone-db
+
+- name: Restart keystone
+  service:
+    name: openstack-keystone.service
+    state: restarted
+    enabled: yes
+  tags: keystone-restart

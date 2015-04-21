@@ -1,0 +1,19 @@
+---
+
+- name: Configure OS keystone
+  template:
+    src: keystone.conf.j2
+    dest: /etc/keystone/keystone.conf
+    backup: yes
+    owner: root
+    group: keystone
+    mode: 0640
+  tags:
+    - keystone-cfg
+
+- name: token_flush cron
+  cron:
+    name: OS keystone token flush
+    job: /usr/bin/keystone-manage token_flush >/var/log/keystone/keystone-tokenflush.log 2>&1 
+    user: keystone
+    special_time: hourly
