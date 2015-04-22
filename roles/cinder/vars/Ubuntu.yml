@@ -1,0 +1,10 @@
+---
+
+cinder_api_packages:
+  - cinder-api
+  - cinder-scheduler
+  - python-cinderclient
+
+cinder_api_services:
+  - cinder-scheduler
+  - cinder-api

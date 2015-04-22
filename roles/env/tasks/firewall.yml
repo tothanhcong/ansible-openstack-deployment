@@ -6,3 +6,4 @@
     state: stopped
     enabled: no
   tags: env-firewall
+  when: ansible_distribution == 'CentOS'

@@ -1,8 +1,19 @@
 ---
 
-- name: Install nova-compute packages
+- name: Install nova-compute packages (CentOS)
   yum:
     name: "{{ item }}"
     state: latest
   with_items: nova_compute_packages
   tags: nova-compute-pkg
+  when: ansible_distribution == 'CentOS'
+
+- name: Install nova-compute (Ubuntu) packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: no
+    cache_valid_time: 7200
+  with_items: nova_compute_packages
+  tags: nova-compute-pkg
+  when: ansible_distribution == 'Ubuntu'

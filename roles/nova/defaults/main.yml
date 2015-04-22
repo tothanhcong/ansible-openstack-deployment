@@ -1,41 +1,15 @@
-nova_api_packages:
-  - openstack-nova-api
-  - openstack-nova-cert
-  - openstack-nova-conductor
-  - openstack-nova-console
-  - openstack-nova-novncproxy
-  - openstack-nova-scheduler
-  - python-novaclient
-
-nova_api_services:
-  - openstack-nova-api.service
-  - openstack-nova-cert.service
-  - openstack-nova-consoleauth.service
-  - openstack-nova-scheduler.service
-  - openstack-nova-conductor.service
-  - openstack-nova-novncproxy.service
-
-
-nova_compute_packages:
-  - openstack-nova-compute
-  - sysfsutils
-
-nova_compute_services:
-  - libvirtd.service
-  - openstack-nova-compute.service
-
 nova_database_name: nova
 nova_database_user: nova
 nova_database_hosts:
   - localhost
-  - "{{ groups['os_controller'] }}"
+  - "{{ groups['controller'] }}"
 nova_admin_user: nova
 nova_admin_email: nova@localhost
 nova_service_name: nova
 nova_service_desc: OpenStack Compute Service
 nova_role: admin
-nova_endpoint_domain: "{{ groups['os_controller'][0] }}"
+nova_endpoint_domain: "{{ groups['controller'][0] }}"
 nova_endpoint_admin_port: 8774
 nova_endpoint_public_port: 8774
 nova_endpoint_region: regionOne
-nova_metadata_server: "{{ groups['os_controller'][0] }}"
+nova_metadata_server: "{{ groups['controller'][0] }}"

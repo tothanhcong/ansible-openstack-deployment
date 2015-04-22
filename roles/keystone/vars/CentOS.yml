@@ -1,0 +1,6 @@
+keystone_packages:
+  - openstack-keystone
+  - python-keystoneclient
+
+keystone_services:
+  - openstack-keystone.service

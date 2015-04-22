@@ -1,11 +1,11 @@
 ---
-
+- include_vars: "../vars/{{ ansible_distribution }}.yml"
 - include: nova-api-install.yml
-  when: inventory_hostname in groups['os_controller']
+  when: inventory_hostname in groups['controller']
 - include: nova-compute-install.yml
-  when: inventory_hostname in groups['os_compute']
+  when: inventory_hostname in groups['compute']
 - include: nova-post.yml
 - include: nova-api-tenants.yml
-  when: inventory_hostname in groups['os_controller']
+  when: inventory_hostname in groups['controller']
 - include: nova-api-db-setup.yml
-  when: inventory_hostname in groups['os_controller']
+  when: inventory_hostname in groups['controller']

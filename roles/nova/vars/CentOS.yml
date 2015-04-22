@@ -1,0 +1,27 @@
+---
+
+nova_api_packages:
+  - openstack-nova-api
+  - openstack-nova-cert
+  - openstack-nova-conductor
+  - openstack-nova-console
+  - openstack-nova-novncproxy
+  - openstack-nova-scheduler
+  - python-novaclient
+
+nova_api_services:
+  - openstack-nova-api.service
+  - openstack-nova-cert.service
+  - openstack-nova-consoleauth.service
+  - openstack-nova-scheduler.service
+  - openstack-nova-conductor.service
+  - openstack-nova-novncproxy.service
+
+
+nova_compute_packages:
+  - openstack-nova-compute
+  - sysfsutils
+
+nova_compute_services:
+  - libvirtd.service
+  - openstack-nova-compute.service

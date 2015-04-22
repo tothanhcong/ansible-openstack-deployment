@@ -1,0 +1,30 @@
+---
+
+neutron_api_packages:
+  - openstack-neutron
+  - openstack-neutron-ml2
+  - python-neutronclient
+  - which
+
+neutron_network_pakages:
+  - openstack-neutron
+  - openstack-neutron-ml2
+  - openstack-neutron-openvswitch
+
+neutron_compute_pakages:
+  - openstack-neutron-ml2
+  - openstack-neutron-openvswitch
+
+nautron_api_services:
+  - neutron-server.service
+
+neutron_network_services:
+  - neutron-openvswitch-agent.service
+  - neutron-l3-agent.service
+  - neutron-dhcp-agent.service
+  - neutron-metadata-agent.service
+
+neutron_compute_services:
+  - neutron-openvswitch-agent.service
+
+neutron_openvswitch_service: openvswitch.service

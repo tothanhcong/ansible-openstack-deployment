@@ -1,5 +1,5 @@
 ---
-
+- include_vars: "../vars/{{ ansible_distribution }}.yml"
 - include: glance_install.yml
 - include: glance_user_tenant_role.yml
 - include: glance_post.yml

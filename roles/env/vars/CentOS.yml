@@ -1,0 +1,7 @@
+ntp_service: ntpd.service
+ntp_config_file: /etc/ntp.conf
+extra_packages:
+  - yum-plugin-priorities
+  - http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+
+openstack_repo: http://rdo.fedorapeople.org/openstack-juno/rdo-release-juno.rpm

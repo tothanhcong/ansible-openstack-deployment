@@ -8,8 +8,7 @@
     owner: root
     group: keystone
     mode: 0640
-  tags:
-    - keystone-cfg
+  tags: keystone-cfg
 
 - name: token_flush cron
   cron:
@@ -17,3 +16,4 @@
     job: /usr/bin/keystone-manage token_flush >/var/log/keystone/keystone-tokenflush.log 2>&1 
     user: keystone
     special_time: hourly
+  tags: keystone-cfg

@@ -1,8 +1,19 @@
 ---
 
-- name: Install cinder-api packages
+- name: Install cinder-api (CentOS) packages
   yum:
     name: "{{ item }}"
     state: latest
   with_items: cinder_api_packages
   tags: cinder-api-pkg
+  when: ansible_distribution == 'CentOS'
+
+- name: Install cinder-api (Ubuntu) packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: no
+    cache_valid_time: 7200
+  tags: cinder-api-pkg
+  with_items: cinder_api_packages
+  when: ansible_distribution == 'Ubuntu'

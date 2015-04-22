@@ -1,0 +1,6 @@
+keystone_packages:
+  - keystone
+  - python-keystoneclient
+
+keystone_services:
+  - keystone

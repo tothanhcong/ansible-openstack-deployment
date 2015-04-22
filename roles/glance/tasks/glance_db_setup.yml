@@ -23,6 +23,5 @@
 - name: Populate glance database
   shell: su -s /bin/sh -c "glance-manage db_sync" glance
   notify: 
-    - Restart glance-api
-    - Restart glance-registry
+    - Restart glance services
   tags: glance-db

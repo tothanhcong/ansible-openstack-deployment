@@ -1,4 +1,17 @@
 ---
+- name: Set database_config_file var
+  set_fact:
+    database_config_file: /etc/mysql/my.cnf
+    database_service_name: mysql
+  when: ansible_distribution == "Ubuntu"
+  tags: env-db-cfg
+  
+- name: Set database_config_file var
+  set_fact:
+    database_config_file: /etc/my.cnf
+    database_service_name: mariadb.service
+  when: ansible_distribution == "CentOS"
+  tags: env-db-cfg
 
 - name: Configure Database Server
   ini_file:
@@ -25,7 +38,8 @@
     name: "{{ database_service_name }}"
     state: restarted
     enabled: yes
-  tags: env-db-restart
+  tags: env-db-cfg
+
 
 - name: Create database root password 1st phase
   mysql_user:

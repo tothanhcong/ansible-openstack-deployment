@@ -1,4 +1,7 @@
 ---
+- include_vars: "../vars/{{ ansible_distribution }}.yml"
+  when: neutron_openvswitch_service is not defined
+  tags: neutron-cfg
 
 - name: Get 'service' tenant ID
   shell: keystone tenant-list | grep {{ nova_admin_tenant }} | awk '{ print $2}'
@@ -7,11 +10,11 @@
     OS_SERVICE_ENDPOINT: "http://{{ keystone_service_domain }}:{{ keystone_service_admin_port }}/v2.0"
   register: nova_admin_tenant_id
   tags: neutron-cfg
-  when: inventory_hostname in groups['os_controller']
+  when: inventory_hostname in groups['controller']
 
 - name: Modify neutron.conf of neutron-server
   template:
-    src: neutron.conf.j2
+    src: "neutron.conf.j2"
     dest: /etc/neutron/neutron.conf
     owner: root
     group: neutron
@@ -21,7 +24,7 @@
 
 - name: Modify ml2_conf.ini
   template:
-    src: ml2_plugin.ini.j2
+    src: "ml2_plugin.ini.j2"
     dest: /etc/neutron/plugins/ml2/ml2_conf.ini
     owner: root
     group: neutron
@@ -31,25 +34,25 @@
 
 - name: Modify l3_agent.ini
   template:
-    src: l3_agent.ini.j2
+    src: "l3_agent.ini.j2"
     dest: /etc/neutron/l3_agent.ini
     owner: root
     group: neutron
     mode: 0640
     backup: no
   tags: neutron-cfg
-  when: inventory_hostname in groups['os_network']
+  when: inventory_hostname in groups['network']
 
 - name: Modify dhcp_agent.ini
   template:
-    src: dhcp_agent.ini.j2
+    src: "dhcp_agent.ini.j2"
     dest: /etc/neutron/dhcp_agent.ini
     owner: root
     group: neutron
     mode: 0640
     backup: no
   tags: neutron-cfg
-  when: inventory_hostname in groups['os_network']
+  when: inventory_hostname in groups['network']
 
 - name: Configure DHCP MTU
   copy:
@@ -57,18 +60,18 @@
     dest: /etc/neutron/dnsmasq-neutron.conf
     mode: 0644
   tags: neutron-cfg
-  when: inventory_hostname in groups['os_network']
+  when: inventory_hostname in groups['network']
 
 - name: Modify dhcp_agent.ini
   template:
-    src: metadata_agent.ini.j2
+    src: "metadata_agent.ini.j2"
     dest: /etc/neutron/metadata_agent.ini
     owner: root
     group: neutron
     mode: 0640
     backup: no
   tags: neutron-cfg
-  when: inventory_hostname in groups['os_network']
+  when: inventory_hostname in groups['network']
 
 - name: Create plugin.ini symlink 
   file:
@@ -78,29 +81,30 @@
     owner: root
     group: root
   tags: neutron-cfg
+  when: ansible_distribution == 'CentOS'
 
 - name: Explicity start openvswitch
   service:
-    name: openvswitch.service
+    name: "{{ neutron_openvswitch_service }}"
     state: started
     enabled: yes
-  tags: start-openvswitch
-  when: inventory_hostname in groups['os_compute'] or inventory_hostname in groups['os_network']
+  tags: neutron-cfg
+  when: inventory_hostname in groups['compute'] or inventory_hostname in groups['network']
 
 - name: add br-ex Openvswitch Bridge
   openvswitch_bridge:
     bridge: "{{ neutron_network_external_bridge }}"
     state: present
-  tags: add-ext-bridge
-  when: inventory_hostname in groups['os_network']
+  tags: neutron-cfg
+  when: inventory_hostname in groups['network']
 
 - name: add port to external bridge
   openvswitch_port:
     bridge: "{{ neutron_network_external_bridge }}"
     port: "{{ neutron_network_external_interface }}"
     state: present
-  tags: add-ext-port
-  when: inventory_hostname in groups['os_network']
+  tags: neutron-cfg
+  when: inventory_hostname in groups['network']
 
 - name: Fix package bug
   shell: >
@@ -108,4 +112,5 @@
     /usr/lib/systemd/system/neutron-openvswitch-agent.service
   notify:
     - Enable neutron-ovs-cleanup
-  when: inventory_hostname in groups['os_compute'] or inventory_hostname in groups['os_network']
+  when: (inventory_hostname in groups['compute'] or inventory_hostname in groups['network']) and ansible_distribution == 'CentOS'
+  tags: neutron-cfg

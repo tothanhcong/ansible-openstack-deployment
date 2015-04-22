@@ -1,8 +1,19 @@
 ---
 
-- name: Install OS keystone packages
+- name: Install OS keystone packages (CentOS)
   yum:
     name: "{{ item }}"
     state: latest
   with_items: keystone_packages
   tags: keystone-pkg
+  when: ansible_distribution == 'CentOS'
+
+- name: Install keystone packages (Ubuntu) 
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 7200
+  tags: keystone-pkg
+  with_items: keystone_packages
+  when: ansible_distribution == 'Ubuntu'

@@ -1,20 +1,50 @@
 ---
-- name: Install yum-plugin-priorities
+
+- name: Install extra packages (CentOS)
   yum:
-    name: yum-plugin-priorities
+    name: "{{ item }}"
     state: latest
+  with_items: extra_packages
+  when: ansible_distribution == 'CentOS'
+  tags: env-extra
 
-- name: Install EPEL 7
-  yum: 
-    name: "{{ epel7_package }}"
-    state: present
-
-- name: Install Openstack RDO Repository
+- name: Install Openstack Juno Repository (CentOS)
   yum:
-    name: "{{ rdo_repository }}"
+    name: "{{ openstack_repo }}"
     state: present
+  when: ansible_distribution == 'CentOS'
+  tags: env-extra
 
-- name: Upgrade all packages
+- name: Upgrade all packages (CentOS)
   yum: 
     name: "*" 
     state: latest
+  when: ansible_distribution == 'CentOS'
+  tags: env-extra
+
+
+- name: Install extra packages (Ubuntu)
+  apt:
+    name: ubuntu-cloud-keyring
+    state: latest
+    update_cache: yes
+    cache_valid_time: 7200
+  with_items: extra_packages
+  when: ansible_distribution == 'Ubuntu'
+  tags: env-extra
+
+
+- name: Install Openstack Juno Cloud-archive
+  apt_repository:
+    repo: "{{ openstack_repo }}"
+    state: present
+    update_cache: yes
+  when: ansible_distribution == 'Ubuntu'
+  tags: env-extra
+
+- name: Upgrade system (Ubuntu)
+  apt:
+    upgrade: dist
+    update_cache: yes
+    cache_valid_time: 7200
+  tags: env-extra

@@ -2,7 +2,7 @@
 
 - name: Restart ntp
   service:
-    name: "{{ ntp_services }}"
+    name: "{{ ntp_service }}"
     state: restarted
     enabled: yes
 

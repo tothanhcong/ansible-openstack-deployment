@@ -1,4 +1,5 @@
 ---
+
 - name: Create keystone database
   mysql_db:
     login_host: localhost
@@ -25,7 +26,8 @@
 
 - name: Restart keystone
   service:
-    name: openstack-keystone.service
+    name: "{{ item }}"
     state: restarted
     enabled: yes
-  tags: keystone-restart
+  with_items: keystone_services
+  tags: keystone-db

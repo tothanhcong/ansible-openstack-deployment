@@ -1,15 +1,8 @@
-keystone_packages:
-  - openstack-keystone
-  - python-keystoneclient
-
-keystone_services:
-  - openstack-keystone.service
-  
 keystone_database_name: keystone
 keystone_database_user: keystone
 keystone_database_hosts:
   - localhost
-  - "{{ groups['os_controller'] }}"
+  - "{{ groups['controller'] }}"
 keystone_tenants:
   - { name: 'admin', desc: 'Admin tenant' }
   - { name: 'service', desc: 'Services tenant' }

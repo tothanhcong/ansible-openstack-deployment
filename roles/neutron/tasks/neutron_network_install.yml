@@ -1,8 +1,22 @@
 ---
+- include_vars: "../vars/{{ ansible_distribution }}.yml"
+  when: neutron_network_pakages is not defined
+  tags: neutron-network-pkgs
 
-- name: Install neutron Network
+- name: Install neutron Network (CentOS)
   yum:
     name: "{{ item }}"
     state: latest
   with_items: neutron_network_pakages
+  when: ansible_distribution == 'CentOS'
+  tags: neutron-network-pkgs
+
+- name: Install neutron Network (Ubuntu)
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: no
+    cache_valid_time: 7200
+  with_items: neutron_network_pakages
+  when: ansible_distribution == 'Ubuntu'
   tags: neutron-network-pkgs

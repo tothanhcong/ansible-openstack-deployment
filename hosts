@@ -1,13 +1,13 @@
-[os_all]
-controller ansible_ssh_host=10.10.10.128
-compute ansible_ssh_host=10.10.10.129
-network ansible_ssh_host=10.10.10.134
-
-[os_controller]
+[controller]
 controller ansible_ssh_host=10.10.10.128
 
-[os_compute]
+[compute]
 compute ansible_ssh_host=10.10.10.129
 
-[os_network]
+[network]
 network ansible_ssh_host=10.10.10.134
+
+[all:children]
+controller
+compute
+network

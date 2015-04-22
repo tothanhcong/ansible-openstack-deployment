@@ -1,38 +1,18 @@
-neutron_api_packages:
-  - openstack-neutron
-  - openstack-neutron-ml2
-  - python-neutronclient
-  - which
-
-neutron_network_pakages:
-  - openstack-neutron
-  - openstack-neutron-ml2
-  - openstack-neutron-openvswitch
-
-neutron_compute_pakages:
-  - openstack-neutron-ml2
-  - openstack-neutron-openvswitch
-
 neutron_instance_network_interface: "ansible_{{ neutron_instance_network_interface }}"
-
-
-nautron_api_services:
-  - neutron-server.service
-
 
 ## Neutron Options
 neutron_database_name: neutron
 neutron_database_user: neutron
 neutron_database_hosts:
   - localhost
-  - "{{ groups['os_controller'] }}"
+  - "{{ groups['controller'] }}"
 neutron_admin_user: neutron
 neutron_admin_email: neutron@localhost
 neutron_admin_tenant: service
 neutron_service_name: neutron
 neutron_service_desc: OpenStack Networking Service
 neutron_role: admin
-neutron_endpoint_domain: "{{ groups['os_controller'][0] }}"
+neutron_endpoint_domain: "{{ groups['controller'][0] }}"
 neutron_endpoint_admin_port: 9696
 neutron_endpoint_public_port: 9696
 neutron_endpoint_region: regionOne

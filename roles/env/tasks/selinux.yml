@@ -3,7 +3,9 @@
 - name: Disable SELinux config
   selinux:
     state: disabled
+  tags: env-selinux
 
 - name: Disable SELinux Running
   shell: setenforce 0
   ignore_errors: yes
+  tags: env-selinux

@@ -1,4 +1,8 @@
 [DEFAULT]
+{% if ansible_distribution == 'Ubuntu' %}
+lock_path = $state_path/lock
+{% endif %}
+
 rpc_backend = rabbit
 rabbit_host = {{ rabbitmq_host }}
 rabbit_password = {{ rabbitmq_password }}
@@ -8,7 +12,7 @@ service_plugins = router
 allow_overlapping_ips = True
 verbose = True
 
-{% if inventory_hostname in groups['os_controller'] %}
+{% if inventory_hostname in groups['controller'] %}
 notify_nova_on_port_status_changes = True
 notify_nova_on_port_data_changes = True
 nova_url = http://{{ nova_endpoint_domain }}:{{ nova_endpoint_public_port }}/v2
@@ -22,6 +26,11 @@ nova_admin_password = {{ nova_admin_pass }}
 connection = mysql://{{ neutron_database_user }}:{{ neutron_database_pass }}@{{ mysql_server }}/{{ neutron_database_name }}
 {% endif %}
 
+{% if ansible_distribution == 'Ubuntu' %}
+[agent]
+root_helper = sudo /usr/bin/neutron-rootwrap /etc/neutron/rootwrap.conf
+{% endif %}
+
 [keystone_authtoken]
 auth_uri = http://{{ identity_domain }}:{{ identity_public_port }}/v2.0
 identity_uri = http://{{ identity_domain }}:{{ identity_admin_port }}
@@ -31,3 +40,4 @@ admin_password = {{ neutron_admin_pass }}
 
 [service_providers]
 service_provider = VPN:openswan:neutron.services.vpn.service_drivers.ipsec.IPsecVPNDriver:default
+service_provider=LOADBALANCER:Haproxy:neutron.services.loadbalancer.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default

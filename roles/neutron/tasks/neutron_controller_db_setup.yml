@@ -1,5 +1,9 @@
 ---
 
+- include_vars: "../vars/{{ ansible_distribution }}.yml"
+  when: neutron_api_services is not defined
+  tags: neutron-db
+
 - name: Create neutron database
   mysql_db:
     login_host: localhost
@@ -24,6 +28,4 @@
   shell: > 
     su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf
     --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade juno" neutron
-  notify: 
-    - Restart neutron-server
   tags: neutron-db

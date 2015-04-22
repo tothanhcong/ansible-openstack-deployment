@@ -1,0 +1,20 @@
+---
+
+## Shared params
+mysql_server: "{{ groups['controller'][0] }}"
+identity_domain: "{{ groups['controller'][0] }}"
+novnc_base_domain: "{{ groups['controller'][0] }}"
+identity_admin_port: 35357
+identity_public_port: 5000
+identity_region: regionOne
+rabbitmq_host: "{{ groups['controller'][0] }}"
+glance_domain: "{{ groups['controller'][0] }}"
+nova_admin_tenant: service
+nova_endpoint_domain: "{{ groups['controller'][0] }}"
+nova_endpoint_public_port: 8774
+nova_endpoint_region: regionOne
+nova_metadata_server: "{{ groups['controller'][0] }}"
+nova_admin_user: nova
+neutron_endpoint_domain: "{{ groups['controller'][0] }}"
+neutron_endpoint_admin_port: 9696
+neutron_admin_user: neutron

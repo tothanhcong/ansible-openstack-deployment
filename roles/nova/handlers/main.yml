@@ -6,7 +6,7 @@
     state: restarted
     enabled: yes
   with_items: nova_api_services
-  when: inventory_hostname in groups['os_controller']
+  when: inventory_hostname in groups['controller']
 
 - name: Restart nova-compute services
   service:
@@ -14,4 +14,4 @@
     state: restarted
     enabled: yes
   with_items: nova_compute_services
-  when: inventory_hostname in groups['os_compute']
+  when: inventory_hostname in groups['compute']

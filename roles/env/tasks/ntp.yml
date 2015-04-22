@@ -1,31 +1,41 @@
 ---
 
-- name: Install ntp
+- name: Install ntp (CentOS)
   yum:
     name: "{{ ntp_package_name }}"
     state: latest
   tags: ntp-pkg
+  when: ansible_distribution == 'CentOS'
+
+- name: Install ntp (Ubuntu)
+  apt:
+    name: "{{ ntp_package_name }}"
+    state: latest
+    update_cache: no
+    cache_valid_time: 7200
+  when: ansible_distribution == 'Ubuntu'
+  tags: ntp-pkg
 
 - name: Configure ntp controller service
   template:
-    src: controller_ntp.conf.j2
+    src: "controller_{{ ansible_distribution }}_ntp.conf.j2"
     dest: /etc/ntp.conf
     owner: root
     group: root
     mode: 0644
     backup: yes
-  when: inventory_hostname in groups['os_controller']
-  tags: ntp-cfg-controller
+  when: inventory_hostname in groups['controller']
+  tags: ntp-cfg
   notify: Restart ntp
 
 - name: Configure ntp (others) node
   template:
-    src: others_ntp.conf.j2
+    src: "others_{{ ansible_distribution }}_ntp.conf.j2"
     dest: /etc/ntp.conf
     owner: root
     group: root
     mode: 0644
     backup: yes
-  when: inventory_hostname not in groups['os_controller']
-  tags: ntp-cfg-others
+  when: inventory_hostname not in groups['controller']
+  tags: ntp-cfg
   notify: Restart ntp

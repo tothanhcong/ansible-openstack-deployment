@@ -1,8 +1,26 @@
 ---
 
-- name: Install Openstack Dashboard packages
+- name: Install Openstack Dashboard (CentOS) packages
   yum:
     name: "{{ item }}"
     state: latest
   with_items: horizon_packages
+  when: ansible_distribution == 'CentOS'
+  tags: horizon-pkgs
+
+- name: Install Openstack Dashboard (Ubuntu) packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: no
+    cache_valid_time: 7200
+  with_items: horizon_packages
+  when: ansible_distribution == 'Ubuntu'
+  tags: horizon-pkgs
+
+- name: Remove openstack-dashboard-ubuntu-theme
+  apt:
+    name: openstack-dashboard-ubuntu-theme
+    state: absent
+  when: ansible_distribution == 'Ubuntu'
   tags: horizon-pkgs

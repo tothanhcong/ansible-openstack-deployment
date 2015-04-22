@@ -1,16 +1,8 @@
-glance_packages:
-  - openstack-glance
-  - python-glanceclient
-
-glance_service_name:
-  - openstack-glance-api.service
-  - openstack-glance-registry.service
-
 glance_database_name: glance
 glance_database_user: glance
 glance_database_hosts:
   - localhost
-  - "{{ groups['os_controller'] }}"
+  - "{{ groups['controller'] }}"
 glance_admin_user: glance
 glance_admin_email: glance@localhost
 glance_admin_tenant: service

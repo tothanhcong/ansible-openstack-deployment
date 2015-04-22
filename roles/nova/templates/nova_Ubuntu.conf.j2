@@ -1,0 +1,44 @@
+[DEFAULT]
+dhcpbridge_flagfile=/etc/nova/nova.conf
+dhcpbridge=/usr/bin/nova-dhcpbridge
+logdir=/var/log/nova
+state_path=/var/lib/nova
+lock_path=/var/lock/nova
+force_dhcp_release=True
+libvirt_use_virtio_for_bridges=True
+verbose=True
+ec2_private_dns_show_ip=True
+api_paste_config=/etc/nova/api-paste.ini
+enabled_apis=ec2,osapi_compute,metadata
+
+rpc_backend = rabbit
+rabbit_host = {{ rabbitmq_host }}
+rabbit_password = {{ rabbitmq_password }}
+auth_strategy = keystone
+my_ip = {{ ansible_ssh_host }}
+{% if inventory_hostname in groups['controller'] %}
+vncserver_listen = {{ ansible_ssh_host }}
+vncserver_proxyclient_address = {{ ansible_ssh_host }}
+{% if inventory_hostname in groups['compute'] %}
+vncserver_listen = 0.0.0.0
+novncproxy_base_url = http://{{ novnc_base_domain }}:6080/vnc_auto.html
+{% endif %}
+
+[database]
+connection = mysql://{{ nova_database_user }}:{{ nova_database_pass }}@{{ mysql_server }}/{{ nova_database_name }}
+{% endif %}
+
+[glance]
+host = {{ glance_domain }}
+
+[keystone_authtoken]
+auth_uri = http://{{ identity_domain }}:{{ identity_public_port }}/v2.0
+identity_uri = http://{{ identity_domain }}:{{ identity_admin_port }}
+admin_tenant_name = {{ nova_admin_tenant }}
+admin_user = {{ nova_admin_user }}
+admin_password = {{ nova_admin_pass }}
+
+{% if inventory_hostname in groups['compute'] %}
+[libvirt]
+virt_type = kvm
+{% endif %}

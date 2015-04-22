@@ -1,17 +1,27 @@
 ---
 
-- name: Install rabbitmq-server
+- name: Install rabbitmq-server (CentOS)
   yum:
     name: "{{ rabbitmq_packages }}"
     state: latest
-  tags: env-message-install
+  tags: env-message
+  when: ansible_distribution == 'CentOS'
+
+- name: Install rabbitmq-server (Ubuntu)
+  apt:
+    name: "{{ rabbitmq_packages }}"
+    state: latest
+    update_cache: yes
+    cache_valid_time: 7200
+  tags: env-message
+  when: ansible_distribution == 'Ubuntu'
 
 - name: Start rabbitmq-server
   service:
     name: "{{ rabbitmq_services }}"
     enabled: yes
     state: started
-  tags: env-message-install
+  tags: env-message
 
 - name: Change guest password
   rabbitmq_user:
@@ -22,4 +32,4 @@
     write_priv: .*
     state: present
     force: yes
-  tags: env-message-pwd
+  tags: env-message

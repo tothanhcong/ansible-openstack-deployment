@@ -43,5 +43,5 @@
 
 - name: Enable neutron-ovs-cleanup
   service:
-    name: neutron-ovs-cleanup.service
+    name: neutron-ovs-cleanup
     enabled: yes

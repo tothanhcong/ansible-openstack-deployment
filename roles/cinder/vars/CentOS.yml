@@ -1,0 +1,10 @@
+---
+
+cinder_api_packages:
+  - openstack-cinder
+  - python-cinderclient
+  - python-oslo-db
+
+cinder_api_services:
+  - openstack-cinder-api.service
+  - openstack-cinder-scheduler.service

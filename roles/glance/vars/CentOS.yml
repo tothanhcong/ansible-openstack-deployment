@@ -1,0 +1,9 @@
+---
+
+glance_packages:
+  - openstack-glance
+  - python-glanceclient
+
+glance_services:
+  - openstack-glance-api.service
+  - openstack-glance-registry.service

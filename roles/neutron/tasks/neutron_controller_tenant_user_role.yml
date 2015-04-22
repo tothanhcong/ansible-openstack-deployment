@@ -10,7 +10,6 @@
     tenant: "{{ neutron_admin_tenant }}"
   tags: neutron-user
 
-
 # Apply the admin role to 'neutron' user for 'service' tenant
 - name: Assign admin role to 'neutron' user
   keystone_user:

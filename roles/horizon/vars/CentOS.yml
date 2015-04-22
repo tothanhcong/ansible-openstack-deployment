@@ -1,0 +1,14 @@
+horizon_packages:
+   - openstack-dashboard
+   - httpd
+   - mod_wsgi
+   - memcached
+   - python-memcached
+
+horizon_config_file: /etc/openstack-dashboard/local_settings
+config_mode: "0640"
+config_user: root
+config_group: apache
+horizon_services:
+  - httpd.service
+  - memcached.service

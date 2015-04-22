@@ -1,8 +1,22 @@
 ---
+- include_vars: "../vars/{{ ansible_distribution }}.yml"
+  when: neutron_compute_pakages is not defined
+  tags: neutron-compute-pkgs
 
-- name: Install neutron Compute
+- name: Install neutron Compute (CentOS)
   yum:
     name: "{{ item }}"
     state: latest
   with_items: neutron_compute_pakages
+  when: ansible_distribution == 'CentOS'
+  tags: neutron-compute-pkgs
+
+- name: Install neutron Compute (Ubuntu) pakages
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: no
+    cache_valid_time: 7200
+  with_items: neutron_compute_pakages
+  when: ansible_distribution == 'Ubuntu'
   tags: neutron-compute-pkgs

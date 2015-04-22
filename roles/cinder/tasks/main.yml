@@ -1,5 +1,5 @@
 ---
-
+- include_vars: "../vars/{{ ansible_distribution }}.yml"
 - include: cinder-api-install.yml
 - include: cinder-api-post.yml
 - include: cinder-tenant.yml

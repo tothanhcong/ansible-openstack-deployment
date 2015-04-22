@@ -1,6 +1,7 @@
 [DEFAULT]
 admin_token = {{ keystone_admin_token }}
 verbose = True
+log_dir=/var/log/keystone
 
 [database]
 connection = mysql://{{ keystone_database_user }}:{{ keystone_database_pass }}@{{ mysql_server }}/{{ keystone_database_name }}
@@ -11,3 +12,8 @@ driver = keystone.contrib.revoke.backends.sql.Revoke
 [token]
 provider = keystone.token.providers.uuid.Provider
 driver = keystone.token.persistence.backends.sql.Token
+
+{% if ansible_distribution == 'Ubuntu' %}
+[extra_headers]
+Distribution = Ubuntu
+{% endif %}

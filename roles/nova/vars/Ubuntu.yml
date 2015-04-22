@@ -1,0 +1,26 @@
+---
+
+nova_api_packages:
+  - nova-api
+  - nova-cert
+  - nova-conductor
+  - nova-consoleauth
+  - nova-novncproxy
+  - nova-scheduler
+  - python-novaclient
+
+nova_api_services:
+  - nova-api
+  - nova-cert
+  - nova-consoleauth
+  - nova-scheduler
+  - nova-conductor
+  - nova-novncproxy
+
+
+nova_compute_packages:
+  - nova-compute
+  - sysfsutils
+
+nova_compute_services:
+  - nova-compute

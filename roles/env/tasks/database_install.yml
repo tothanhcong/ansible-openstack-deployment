@@ -1,14 +1,36 @@
 ---
-- name: Instal database server pakages
+
+- name: Instal database server pakages (CentOS)
   yum:
     name: "{{ item }}"
     state: latest
-  with_items: database_server_packages
-  tags: env-db-server
-  when: inventory_hostname in groups['os_controller']
+  with_items:
+    - mariadb
+    - mariadb-server
+  tags: env-db
+  when: inventory_hostname in groups['controller'] and ansible_distribution == "CentOS"
 
-- name: Install database python client
+- name: Install database python client (CentOS)
   yum:
-    name: "{{ database_python }}"
+    name: MySQL-python
     state: latest
-  tags: env-db-python
+  tags: env-db
+  when: inventory_hostname in groups['controller'] and ansible_distribution == "CentOS"
+
+- name: Instal database server pakages (Ubuntu)
+  apt:
+    name: mariadb-server
+    state: latest
+    update_cache: yes
+    cache_valid_time: 7200
+  tags: env-db
+  when: inventory_hostname in groups['controller'] and ansible_distribution == "Ubuntu"
+
+- name: Install database python client (Ubuntu)
+  apt:
+    name: python-mysqldb
+    state: latest
+    update_cache: yes
+    cache_valid_time: 7200
+  tags: env-db
+  when: inventory_hostname in groups['controller'] and ansible_distribution == "Ubuntu"

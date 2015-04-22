@@ -1,0 +1,7 @@
+ntp_service: ntp
+ntp_config_file: /etc/ntp.conf
+
+extra_packages:
+  - ubuntu-cloud-keyring
+
+openstack_repo: "deb http://ubuntu-cloud.archive.canonical.com/ubuntu trusty-updates/juno main"

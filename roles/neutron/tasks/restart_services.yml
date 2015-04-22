@@ -1,22 +1,31 @@
 ---
+- include_vars: "../vars/{{ ansible_distribution }}.yml"
+  when: neutron_network_services is not defined
+  tags: neutron-service-restart
 
 - name: Restart neutron (Network Nodes)
   service:
     name: "{{ item }}"
     state: restarted
     enabled: yes
-  with_items:
-    - neutron-openvswitch-agent.service
-    - neutron-l3-agent.service
-    - neutron-dhcp-agent.service
-    - neutron-metadata-agent.service
-  when: inventory_hostname in groups['os_network']
+  with_items: neutron_network_services
+  when: inventory_hostname in groups['network']
   tags: neutron-service-restart
   
 - name: Restart neutron (Compute Nodes)
   service:
-    name: neutron-openvswitch-agent.service
+    name: "{{ item }}"
     state: restarted
     enabled: yes
-  when: inventory_hostname in groups['os_compute']
+  with_items: neutron_compute_services
+  when: inventory_hostname in groups['compute']
+  tags: neutron-service-restart
+  
+- name: Restart neutron (Controller Nodes)
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items: neutron_api_services
+  when: inventory_hostname in groups['controller']
   tags: neutron-service-restart

@@ -1,8 +1,19 @@
 ---
 
-- name: Install Glance packages
+- name: Install Glance (CentOS) packages
   yum:
     name: "{{ item }}"
     state: latest
   with_items: glance_packages
   tags: glance-pkg
+  when: ansible_distribution == 'CentOS'
+
+- name: Install Glance (Ubuntu) packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: no
+    cache_valid_time: 7200
+  tags: glance-pkg
+  with_items: glance_packages
+  when: ansible_distribution == 'Ubuntu'

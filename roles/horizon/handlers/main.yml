@@ -5,6 +5,4 @@
     name: "{{ item }}"
     state: restarted
     enabled: yes
-  with_items:
-    - httpd.service
-    - memcached.service
+  with_items: horizon_services

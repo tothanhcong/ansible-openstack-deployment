@@ -1,13 +1,8 @@
 ---
 
-- name: Restart glance-api
+- name: Restart glance services
   service:
-    name: openstack-glance-api.service
+    name: "{{ item }}"
     state: restarted
     enabled: yes
-
-- name: Restart glance-registry
-  service:
-    name: openstack-glance-registry.service
-    state: restarted
-    enabled: yes
+  with_items: glance_services

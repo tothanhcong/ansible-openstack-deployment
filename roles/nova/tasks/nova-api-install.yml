@@ -1,8 +1,19 @@
 ---
 
-- name: Install nova-api packages
+- name: Install nova-api (CentOS) packages
   yum:
     name: "{{ item }}"
     state: latest
   with_items: nova_api_packages
   tags: nova-api-pkg
+  when: ansible_distribution == 'CentOS'
+
+- name: Install nova-api (Ubuntu) packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: no
+    cache_valid_time: 7200
+  with_items: nova_api_packages
+  tags: nova-api-pkg
+  when: ansible_distribution == 'Ubuntu'

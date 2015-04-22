@@ -11,5 +11,9 @@ I referenced sample architecture from VietStack github and change some configs (
 - Install ansible in your deployment host.
 - Ensure that the deployment host (where ansible was installed) can reach your Openstack Nodes.
 
-### 2. How to use ?
+### 2. Supported platform
+- This playbook was tested on a virtual environment (VMWare) with 3 node.
+- Support CentOS 7 x86_64/Ubuntu 14.04
+
+### 3. How to use ?
 ```ansible-playbook -e @user_config/user_secrets.yml playbook.yml -i hosts```
