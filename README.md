@@ -12,7 +12,7 @@ I referenced sample architecture from VietStack github and change some configs (
 - Ensure that the deployment host (where ansible was installed) can reach your Openstack Nodes.
 
 ### 2. Supported platform
-- This playbook was tested on a virtual environment (VMWare) with 3 node.
+- This playbook was tested on a virtual environment (VMWare) with 3 nodes.
 - Support CentOS 7 x86_64/Ubuntu 14.04
 
 ### 3. How to use ?
